@@ -16,6 +16,7 @@ import {
 } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import { createIssueSchema } from "@/app/validationSchemas";
+import ErrorMessage from "@/app/components/ErrorMessage";
 
 interface IssueForm {
   title: string;
@@ -50,12 +51,13 @@ const NewIssuePage = () => {
       )}
       <form className="space-y-5" onSubmit={handleSubmit(onSubmit)}>
         <TextField.Root size="2" placeholder="Title" {...register("title")} />
-        {errors.title && <p>{errors.title.message}</p>}
+        <ErrorMessage>{errors.title?.message}</ErrorMessage>
         <Controller
           name="description"
           control={control}
           render={({ field }) => <SimpleMDE {...field} />}
         />
+        <ErrorMessage>{errors.description?.message}</ErrorMessage>
 
         <Button>Submit New Issue</Button>
       </form>
