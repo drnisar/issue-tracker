@@ -4,6 +4,8 @@ import SimpleMDE from "react-simplemde-editor";
 import "easymde/dist/easymde.min.css";
 import React, { useState } from "react";
 import axios from "axios";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 import {
   useForm,
   Controller,
@@ -13,6 +15,7 @@ import {
   UseFormStateReturn,
 } from "react-hook-form";
 import { useRouter } from "next/navigation";
+import { createIssueSchema } from "@/app/validationSchemas";
 
 interface IssueForm {
   title: string;
@@ -20,7 +23,14 @@ interface IssueForm {
 }
 const NewIssuePage = () => {
   const router = useRouter();
-  const { register, control, handleSubmit } = useForm<IssueForm>();
+  const {
+    register,
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<IssueForm>({
+    resolver: zodResolver(createIssueSchema),
+  });
   const [errorMessage, setErrorMessage] = useState("");
 
   const onSubmit = async (data: IssueForm) => {
@@ -40,7 +50,7 @@ const NewIssuePage = () => {
       )}
       <form className="space-y-5" onSubmit={handleSubmit(onSubmit)}>
         <TextField.Root size="2" placeholder="Title" {...register("title")} />
-
+        {errors.title && <p>{errors.title.message}</p>}
         <Controller
           name="description"
           control={control}
