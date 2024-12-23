@@ -28,7 +28,7 @@ const IssuesPage = async () => {
           {issues.map((issue) => (
             <Table.Row key={issue.id}>
               <Table.Cell>
-                {issue.title}
+                <Link href={`/issues/${issue.id}`}>{issue.title}</Link>
                 <Text as="p" className="block md:hidden">
                   {" "}
                   <IssuesStatusBadge status={issue.status} />
