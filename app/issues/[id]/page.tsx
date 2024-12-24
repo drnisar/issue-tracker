@@ -1,7 +1,7 @@
 import prisma from "@/prisma/client";
 import { Box, Grid } from "@radix-ui/themes";
 import { notFound } from "next/navigation";
-import IssueEditButton from "./Edit/IssueEditButton";
+import IssueEditButton from "./IssueEditButton";
 import IssueDetails from "./IssueDetails";
 
 const IssueDetailsPage = async ({ params }: { params: { id: string } }) => {

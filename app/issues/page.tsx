@@ -3,7 +3,7 @@ import { Button, Table, Text } from "@radix-ui/themes";
 import React from "react";
 import { Link, IssuesStatusBadge } from "@/app/components";
 import delay from "delay";
-import IssueActions from "./IssueActions";
+import IssueActions from "./_components/IssueActions";
 
 const IssuesPage = async () => {
   await delay(2000);
