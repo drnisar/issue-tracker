@@ -1,9 +1,8 @@
-import IssuesStatusBadge from "@/app/components/IssuesStatusBadge";
 import prisma from "@/prisma/client";
-import { Box, Button, Card, Flex, Grid, Heading, Text } from "@radix-ui/themes";
+import { Box, Grid } from "@radix-ui/themes";
 import { notFound } from "next/navigation";
-import MarkDown from "react-markdown";
-import { Pencil2Icon } from "@radix-ui/react-icons";
+import IssueEditButton from "./Edit/IssueEditButton";
+import IssueDetails from "./IssueDetails";
 
 const IssueDetailsPage = async ({ params }: { params: { id: string } }) => {
   const issueDetails = await prisma.issue.findUnique({
@@ -14,21 +13,10 @@ const IssueDetailsPage = async ({ params }: { params: { id: string } }) => {
   return (
     <Grid columns={{ initial: "1", md: "2" }} gap="2">
       <Box>
-        <Heading>{issueDetails?.title}</Heading>
-        <Flex gap="2">
-          <IssuesStatusBadge status={issueDetails.status} />
-          <Text className="ml-5">{issueDetails?.createdAt.toDateString()}</Text>
-        </Flex>
-        <Box className="mt-5">
-          <Card className="prose">
-            <MarkDown>{issueDetails.description}</MarkDown>
-          </Card>
-        </Box>
+        <IssueDetails issue={issueDetails} />
       </Box>
       <Box>
-        <Button>
-          <Pencil2Icon /> Edit Record
-        </Button>
+        <IssueEditButton issueId={issueDetails.id} />
       </Box>
     </Grid>
   );
