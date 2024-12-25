@@ -8,7 +8,7 @@ export async function PATCH(
 ) {
   const body = await req.json();
 
-  const validation = await IssueSchema.safeParse(body);
+  const validation = IssueSchema.safeParse(body);
 
   if (!validation.success) {
     return NextResponse.json(
@@ -32,4 +32,5 @@ export async function PATCH(
       description: body.description,
     },
   });
+  return NextResponse.json(updatedIssue);
 }

@@ -25,17 +25,25 @@ const IssueForm = ({ issue }: { issue?: Issue }) => {
     register,
     control,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    formState: { errors },
   } = useForm<IssueFormType>({
     resolver: zodResolver(IssueSchema),
   });
   const [errorMessage, setErrorMessage] = useState("");
+  const [submitting, setSubmitting] = useState(false);
 
   const onSubmit = async (data: IssueFormType) => {
     try {
-      await axios.post("/api/issues", data);
+      setSubmitting(true);
+      if (issue) {
+        await axios.patch("/api/issues/" + issue.id, data);
+      } else {
+        await axios.post("/api/issues", data);
+      }
       router.push("/issues");
+      router.refresh();
     } catch (error) {
+      setSubmitting(false);
       setErrorMessage("Unexpected Error Happened");
     }
   };
@@ -62,9 +70,9 @@ const IssueForm = ({ issue }: { issue?: Issue }) => {
         />
         <ErrorMessage>{errors.description?.message}</ErrorMessage>
 
-        <Button disabled={isSubmitting} type="submit">
-          Submit Issue
-          {isSubmitting && <Spinner />}
+        <Button disabled={submitting} type="submit">
+          {issue ? "Update Issue" : "Create New Issue"}
+          {submitting && <Spinner />}
         </Button>
       </form>
     </div>
