@@ -12,19 +12,17 @@ const IssueDetailsPage = async ({ params }: { params: { id: string } }) => {
 
   if (!issueDetails) notFound();
   return (
-    <Container>
-      <Grid columns={{ initial: "1", sm: "5" }} gap="4">
-        <Box className="md:col-span-4">
-          <IssueDetails issue={issueDetails} />
-        </Box>
-        <Box>
-          <Flex direction="column" gap="2">
-            <IssueEditButton issueId={issueDetails.id} />
-            <DeleteIssueButton issueId={issueDetails.id} />
-          </Flex>
-        </Box>
-      </Grid>
-    </Container>
+    <Grid columns={{ initial: "1", sm: "5" }} gap="4">
+      <Box className="md:col-span-4">
+        <IssueDetails issue={issueDetails} />
+      </Box>
+      <Box>
+        <Flex direction="column" gap="2">
+          <IssueEditButton issueId={issueDetails.id} />
+          <DeleteIssueButton issueId={issueDetails.id} />
+        </Flex>
+      </Box>
+    </Grid>
   );
 };
 
