@@ -1,7 +1,7 @@
 import React from "react";
 
 const LoadingNewIssuePage = () => {
-  return <div>LoadingNewIssuePage</div>;
+  return <div>Loading Issue Details</div>;
 };
 
 export default LoadingNewIssuePage;
