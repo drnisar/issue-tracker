@@ -1,28 +1,35 @@
 "use client";
 import { Spinner } from "@/app/components";
 import { AlertDialog, Button, Flex } from "@radix-ui/themes";
+import { QueryClient, useMutation, useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
-import delay from "delay";
 
 const DeleteIssueButton = ({ issueId }: { issueId: number }) => {
   const [errorMessage, setErrorMessage] = useState("");
   const [deleting, setDeleting] = useState(false);
   const router = useRouter();
+  const queryClient = new QueryClient();
 
-  const deleteIssue = async () => {
-    try {
-      await delay(2000);
-      setDeleting(true);
-      await axios.delete("/api/issues/" + issueId);
+  const { mutate: deleteRecord } = useMutation({
+    mutationFn: async () => await axios.delete("/api/issues/" + issueId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["issues"] });
       router.push("/issues");
       router.refresh();
-    } catch (error) {
-      setDeleting(false);
-      setErrorMessage("Unexpected Error Happened");
-    }
+    },
+    onError: () => setErrorMessage("Unexpected Error Happened"),
+    onSettled: () => setDeleting(false),
+  });
+
+  const deleteIssue = () => {
+    deleteRecord();
   };
+
+  if (errorMessage) {
+    return <div>{errorMessage}</div>;
+  }
   return (
     <AlertDialog.Root>
       <AlertDialog.Trigger>
