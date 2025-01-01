@@ -9,7 +9,7 @@ const IssueDetails = ({ issue }: { issue: Issue }) => {
     <>
       <Heading>{issue.title}</Heading>
       <Flex gap="2">
-        <IssuesStatusBadge status={issue.status} />
+        <IssuesStatusBadge issueStatus={issue.status!} />
         <Text>{issue.createdAt.toDateString()}</Text>
       </Flex>
       <Box className="mt-5">

@@ -7,13 +7,15 @@ const statusMap: Record<
   { label: string; color: "red" | "green" | "violet" }
 > = {
   OPEN: { label: "Open", color: "red" },
-  IN_PPROGRESS: { label: "In Progress", color: "violet" },
+  IN_PROGRESS: { label: "In Progress", color: "violet" },
   CLOSED: { label: "Closed", color: "green" },
 };
 
-const IssuesStatusBadge = ({ status }: { status: Status }) => {
+const IssuesStatusBadge = ({ issueStatus }: { issueStatus: Status }) => {
   return (
-    <Badge color={statusMap[status].color}>{statusMap[status].label}</Badge>
+    <Badge color={statusMap[issueStatus].color}>
+      {statusMap[issueStatus].label}
+    </Badge>
   );
 };
 

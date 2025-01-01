@@ -1,35 +1,63 @@
-"use client";
 import { IssuesStatusBadge } from "@/app/components";
-import { Issue } from "@prisma/client";
-import { Table, Text } from "@radix-ui/themes";
+import NextLink from "next/link";
+import { Issue, Status } from "@prisma/client";
+import { Flex, Table, Text } from "@radix-ui/themes";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import Link from "next/link";
 import React from "react";
 import IssuesTableSkeleton from "./IssuesTableSkeleton";
+import prisma from "@/prisma/client";
+import { ArrowUpIcon } from "@radix-ui/react-icons";
 
-const IssuesTable = () => {
-  const {
-    data: issues,
-    isLoading,
-    error,
-  } = useQuery<Issue[]>({
-    queryKey: ["issues"],
-    queryFn: async () => await axios.get("/api/issues").then((res) => res.data),
+const IssuesTable = async ({
+  searchParams,
+}: {
+  searchParams: { status: Status; orderBy: keyof Issue };
+}) => {
+  const columns: { label: string; value: keyof Issue; className?: string }[] = [
+    { label: "Issue", value: "title" },
+    { label: "Status", value: "status", className: "hidden sm:table-cell" },
+    { label: "Created", value: "createdAt", className: "hidden sm:table-cell" },
+  ];
+
+  const { status } = await searchParams;
+  const statuses = Object.values(Status);
+  const issueStatus = statuses.includes(status) ? status : undefined;
+
+  const orderBy = columns
+    .map((column) => column.value)
+    .includes(searchParams.orderBy)
+    ? { [searchParams.orderBy]: "asc" }
+    : undefined;
+
+  const issues = await prisma.issue.findMany({
+    where: {
+      status: issueStatus,
+    },
+    orderBy: orderBy,
   });
-  if (isLoading) return <IssuesTableSkeleton />;
-  if (error) return <div>Error: {error.message}</div>;
   return (
     <Table.Root variant="surface">
       <Table.Header>
         <Table.Row>
-          <Table.ColumnHeaderCell>Issue</Table.ColumnHeaderCell>
-          <Table.ColumnHeaderCell className="hidden md:table-cell">
-            Status
-          </Table.ColumnHeaderCell>
-          <Table.ColumnHeaderCell className="hidden md:table-cell">
-            Created
-          </Table.ColumnHeaderCell>
+          {columns.map((column) => (
+            <Table.ColumnHeaderCell
+              key={column.value}
+              className={column.className}
+            >
+              <Flex gap="1">
+                <NextLink
+                  href={{
+                    query: { status, orderBy: column.value },
+                  }}
+                >
+                  {column.label}
+                </NextLink>
+                {column.value === searchParams.orderBy && <ArrowUpIcon />}
+              </Flex>
+            </Table.ColumnHeaderCell>
+          ))}
         </Table.Row>
       </Table.Header>
       <Table.Body>
@@ -37,15 +65,15 @@ const IssuesTable = () => {
           <Table.Row key={issue.id}>
             <Table.Cell>
               <Link href={`/issues/${issue.id}`}>{issue.title}</Link>
-              <Text as="p" className="block md:hidden">
+              <Text as="p" className="block sm:hidden">
                 {" "}
-                <IssuesStatusBadge status={issue.status} />
+                <IssuesStatusBadge issueStatus={issue.status!} />
               </Text>
             </Table.Cell>
-            <Table.Cell className="hidden md:table-cell">
-              <IssuesStatusBadge status={issue.status} />
+            <Table.Cell className="hidden sm:table-cell">
+              <IssuesStatusBadge issueStatus={issue.status!} />
             </Table.Cell>
-            <Table.Cell className="hidden md:table-cell">
+            <Table.Cell className="hidden sm:table-cell">
               {new Date(issue.createdAt).toLocaleDateString()}
             </Table.Cell>
           </Table.Row>
